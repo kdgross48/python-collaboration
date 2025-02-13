@@ -11,11 +11,11 @@ def availableCourses ():
 #=============================================================================
 def courseRegistration ():
     course1 = int(input("Please choose a course(enter its number):"))
-    class_reg.append(course1)
+    class_reg.append(classes[course1-1])
     course2 = int(input("Please choose a course(enter its number)"))
-    class_reg.append(course2)
+    class_reg.append(classes[course2-1])
     course3 = int(input("Please choose a course(enter its number)"))
-    class_reg.append(course3)
+    class_reg.append(classes[course3-1])
 
 #=============================================================================
 def showRegisteredCourses ():
@@ -26,24 +26,26 @@ def showRegisteredCourses ():
     
 #=============================================================================
 def systemExit ():
-    print("Skibidi4")
+    print("Thank you")
 
 #=============================================================================
 def main():
     
     name = (input("Input your name: "))
-    decision = int(input("\nWhat would you like to do, " + name + "?\nYou can view available courses (1),\nregister for a course (2),\nview registered courses (3),\nor exit the system (4)?\nYou are limited to a maximum of 3 courses.\n\nDecision: "))
-    
-    if decision == 1: 
-        availableCourses()
-    elif decision == 2: 
-        courseRegistration()
-    elif decision == 3: 
-        showRegisteredCourses()
-    elif decision == 4: 
-        systemExit()
-    else:
-        decision = input("Invalid number.")
+    decision = 0
+    while decision != 4:
+        decision = int(input("\nWhat would you like to do, " + name + "?\nYou can view available courses (1),\nregister for a course (2),\nview registered courses (3),\nor exit the system (4)?\nYou are limited to a maximum of 3 courses.\n\nDecision: "))
+        if decision == 1: 
+            availableCourses()
+        elif decision == 2: 
+            courseRegistration()
+        elif decision == 3: 
+            showRegisteredCourses()
+        else:
+            decision = input("Invalid number.")
+    if decision == 4:
+        systemExit ()
+        
     
 #=============================================================================
 main()
