@@ -26,7 +26,7 @@ def showRegisteredCourses ():
     
 #=============================================================================
 def systemExit ():
-    print("Thank you")
+    print("You just exited the program, thank you!")
 
 #=============================================================================
 def main():
