@@ -41,10 +41,10 @@ def main():
             courseRegistration()
         elif decision == 3: 
             showRegisteredCourses()
+        elif decision == 4:
+            systemExit()
         else:
             decision = input("Invalid number.")
-    if decision == 4:
-        systemExit ()
         
     
 #=============================================================================
