@@ -1,0 +1,67 @@
+class DifferentialEquation:
+    """Base class for handling differential equations."""
+    
+    def __init__(self, equation):
+        self.equation = equation
+        self.order = self.determine_order()
+
+    def determine_order(self):
+        """Determine the order of the differential equation."""
+        pass  
+    
+    def validate_method(self, method):
+        """Check if the chosen method is applicable to this equation."""
+        pass 
+
+
+class Solver:
+    """Base solver class for differential equations."""
+    
+    def solve(self, equation):
+        """General solve method to be overridden by specific solvers."""
+
+
+class SeparableSolver(Solver):
+    """Solver for separable differential equations."""
+    
+    def solve(self, equation):
+        """Solve the given separable equation and return steps."""
+        pass  
+
+
+class LinearSolver(Solver):
+    """Solver for first-order linear differential equations."""
+    
+    def solve(self, equation):
+        """Solve the given linear differential equation."""
+        pass  
+
+
+class BernoulliSolver(Solver):
+    """Solver for Bernoulli differential equations."""
+    
+    def solve(self, equation):
+        """Solve the given Bernoulli equation."""
+        pass  
+
+
+class EquationTutor:
+    """Main class that interacts with the user."""
+    
+    def __init__(self):
+        self.equation = None
+        self.method = None
+
+    def get_user_input(self):
+        """Get user input for the equation and solving method."""
+        pass 
+    
+    def guide_user(self):
+        """Provide step-by-step guidance based on the selected method."""
+        pass  
+
+
+if __name__ == "__main__":
+    tutor = EquationTutor()
+    tutor.get_user_input()
+    tutor.guide_user()
