@@ -1,8 +1,35 @@
 import cmath
+import sympy as sp
 
 class Firstorder:
-    def exact():
-        pass
+    def separation_of_variables():
+        print("\nSolving first-order differential equation using separation of variables.")
+        y = sp.Symbol('y')
+        x = sp.Symbol('x')
+
+        # Get user input for functions f(x) and g(y)
+        f_x = input("Enter f(x) (in terms of x, e.g., x**2 for x^2): ")
+        g_y = input("Enter g(y) (in terms of y, e.g., y for y): ")
+
+        try:
+            f_x_expr = sp.sympify(f_x)
+            g_y_expr = sp.sympify(g_y)
+        except:
+            print("Invalid function input. Please use correct mathematical syntax.")
+            return
+        
+        # Separation of variables: dy/g(y) = f(x)dx
+        lhs = sp.integrate(1 / g_y_expr, y)
+        rhs = sp.integrate(f_x_expr, x)
+
+        # General solution
+        C = sp.Symbol('C')  # Constant of integration
+        solution = sp.Eq(lhs, rhs + C)
+
+        print("\nThe general solution is:")
+        print(solution)
+        return solution
+        
     def exact():
         pass
     def exact():
