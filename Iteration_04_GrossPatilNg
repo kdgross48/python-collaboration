@@ -49,7 +49,22 @@ class Firstorder:
         
         print("\nThe solution to the equation is:")
         print(f"y(x) = {y_solution} + C/{integrating_factor}")
-
+        
+    def Bernoulli():
+        print("Given the form: y' + P(x)y = Q(x)y^n\n")
+        
+        x = sp.symbols('x')
+        y = sp.Function('y')(x)
+        dydx = sp.symbols('dydx')
+        P = sp.sympify(input("Input P(x): "))
+        Q = sp.sympify(input("Input Q(x): "))
+        n = int(input("What is n?:" ))
+        
+        v = sp.Function('v')(x)
+        v = y^(1-n)
+        dvdx = (1-n)* (y^(-n)) * dydx
+        print(dvdx)
+        
 
 class Secondorder:
     def homogeneous():
