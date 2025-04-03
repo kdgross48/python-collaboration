@@ -59,12 +59,21 @@ class Firstorder:
         P = sp.sympify(input("Input P(x): "))
         Q = sp.sympify(input("Input Q(x): "))
         n = int(input("What is n?:" ))
-        
         v = sp.Function('v')(x)
-        v = y^(1-n)
-        dvdx = (1-n)* (y^(-n)) * dydx
-        print(dvdx)
+        C = sp.symbols('C')
         
+        integrating_factor = sp.exp(sp.integrate(P*(1-n), x))
+        
+        lhs = sp.simplify(integrating_factor * v.diff(x))
+        rhs = sp.simplify(integrating_factor * Q * (1-n))
+        
+        v_solution = sp.simplify(sp.integrate(rhs, x) / integrating_factor) + C/integrating_factor
+         
+        y_solution = v_solution**(1/(1-n)) 
+        print(f"y(x) = {y_solution}")
+        
+        
+    
 
 class Secondorder:
     def homogeneous():
@@ -115,11 +124,14 @@ class Laplace:
 def main():    
     order = int(input("What order is your differential equation? (1, 2, ?) [Respond with a question mark if you don't understand the question!]:\n"))
     if (order == 1):
-        firstorder_input = int(input("Using integrating factor (1) or separation of variables (2)?:\n"))
+        firstorder_input = int(input("Using integrating factor (1), separation of variables (2), or Bernoulli(3)?:\n"))
         if firstorder_input == 1:
             Firstorder.integrating_factor()
         if firstorder_input == 2:
             Firstorder.sep_of_var()
+        if firstorder_input == 3:
+            Firstorder.Bernoulli()
+        
     if (order == 2):
         print("Second order equations to be solved will be in the form:\nay\" + by' + cy = f(x)\n")
         function = (input("Input f(x): "))
