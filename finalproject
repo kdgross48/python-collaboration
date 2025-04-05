@@ -119,6 +119,33 @@ class Firstorder:
         
         except Exception as e:
             print(f"\nAn error occurred while solving: {e}")
+
+    @staticmethod
+    def Exact():
+        print("\nSolving an Exact differential equation:")
+        print("The equation should be in the form M(x,y)dx + N(x,y)dy = 0")
+        
+        x = sp.symbols('x')
+        y = sp.symbols('y')
+        C = sp.symbols('C')
+        
+        M = sp.sympify(input("Input M(x,y): "))
+        N = sp.sympify(input("Input N(x,y): "))
+        
+        print("First, prove the equation is exact")
+        
+        
+        print("Finding the solution")
+        
+        u_x = sp.integrate(M,x)
+        u_y = sp.integrate(N,y)
+        
+        missing = u_x - u_y
+        
+        solution = u_x + missing + C
+        
+        print("Solution is" + solution)
+        
             
 class Secondorder:
     @staticmethod
