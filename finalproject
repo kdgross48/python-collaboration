@@ -9,7 +9,7 @@ class Firstorder:
         print("Step 2: Rewrite it as (1/g(y)) dy = f(x) dx and integrate both sides.\n")
         
         x, y, C = sp.symbols('x y C')
-        y_func = sp.Function('y')(x)
+        y_func = sp.Function('y')(x) # defined variables
         
         try:
             print("Step 3: Input f(x) and g(y).")
@@ -21,21 +21,21 @@ class Firstorder:
         
         try:
             print("Step 4: Compute the integral of 1/g(y) with respect to y.")
-            lhs = sp.integrate(1 / (g_y), y)
+            lhs = sp.integrate(1 / (g_y), y) # separating the variables and functions and integrating y-side (left hand side)
             print(f"Integral of 1/g(y): {lhs}")
             
             print("Step 5: Compute the integral of f(x) with respect to x.")
-            rhs = sp.integrate(f_x, x)
+            rhs = sp.integrate(f_x, x) # variables and functions are separated and we integrate the x-side (right hand side)
             print(f"Integral of f(x): {rhs}")
         except sp.IntegralError:
             print("\nCould not find symbolic integral for the given inputs")
             return
         
-        solution = sp.Eq(lhs.subs(y, y_func), rhs + C)
+        solution = sp.Eq(lhs.subs(y, y_func), rhs + C) # compile equation
         
         # Format as proper equation string
-        solution_str = f"{solution.lhs} = {solution.rhs}"
-        solution_str = solution_str.replace('log', 'ln')
+        solution_str = f"{solution.lhs} = {solution.rhs}" # reformat equation
+        solution_str = solution_str.replace('log', 'ln') # the logarithms are pretty much always going to be with base e
         
         print("\nStep 6: Combine results to form the general solution.")
         print("\nThe solution to the equation is:")
@@ -51,16 +51,15 @@ class Firstorder:
         
         try:
             print("Step 2: Input P(x) and Q(x).")
-            P = sp.sympify(input("Input P(x): "))
-            Q_input = input("Input Q(x): ").replace("e^", "exp")  # Replace e^ with exp for compatibility
-            Q = sp.sympify(Q_input)
+            P = sp.sympify(input("Input P(x): ").replace("e^", "exp"))
+            Q = sp.sympify(input("Input Q(x): ").replace("e^", "exp")) # Replace e^ with exp for compatibility
         except (sp.SympifyError, ValueError) as e:
             print(f"\nError parsing input: {e}")
             return
         
         try:
             print("Step 3: Compute the integrating factor μ(x) = e^(∫P(x)dx).")
-            integrating_factor = sp.exp(sp.integrate(P, x))
+            integrating_factor = sp.exp(sp.integrate(P, x)) # compute integrating factor
             print(f"Integrating factor μ(x): {integrating_factor}")
             
             print("Step 4: Multiply through by μ(x) to simplify the equation.")
@@ -139,7 +138,7 @@ class Secondorder:
         try:
             print("Step 4: Calculate the discriminant Δ = b^2 - 4ac.")
             # Calculate the discriminant
-            discriminant = (b**2) - (4*a*c)
+            discriminant = (b**2) - (4*a*c) # to determine how many roots and the final form of the solution
             
             # Check if a is zero
             if a == 0:
@@ -158,7 +157,7 @@ class Secondorder:
             return []
         
         try:
-            x1 = str(x1).replace("+0j", "")
+            x1 = str(x1).replace("+0j", "") # removes redundant value
             x2 = str(x2).replace("+0j", "")
         except Exception as e:
             print(f"Error processing the solution: {e}")
@@ -174,7 +173,7 @@ class Secondorder:
         if not my_list:
             return
         
-        x1 = my_list[0]
+        x1 = my_list[0] # bringing in data to recycle code from homogeneous function
         x2 = my_list[1]
         
         if x1 != x2 and "j" not in str(x1):
@@ -192,7 +191,7 @@ class Secondorder:
         elif "j" in str(x1):
             print("Step 8: If roots are complex conjugates, the general solution involves sine and cosine functions.")
             try:
-                complex_num = complex(x1)  # Convert string back to complex number
+                complex_num = complex(x1)  # convert string back to complex number
                 real_part = complex_num.real
                 imag_part = complex_num.imag
 
@@ -223,7 +222,7 @@ class Secondorder:
             return
 
         try:
-            print("Step 4: Input the function f(x).")
+            print(f"Step 4: The function f(x) was {function}.")
             function = function.replace("e^", "exp")
             f_x = sp.sympify(function)
         except sp.SympifyError as e:
@@ -231,12 +230,12 @@ class Secondorder:
             return
 
         # Create differential equation
-        equation = sp.Eq(a*y.diff(x,x) + b*y.diff(x) + c*y, f_x)
+        equation = sp.Eq(a*y.diff(x,x) + b*y.diff(x) + c*y, f_x) 
         
         try:
             print("Step 5: Solve the differential equation using an appropriate method.")
             # Attempt undetermined coefficients first
-            solution = sp.dsolve(equation, y, hint='undetermined_coefficients')
+            solution = sp.dsolve(equation, y, hint='undetermined_coefficients') # built in function to solve for complementary function
         except Exception:
             # Fallback to general solution method
             solution = sp.dsolve(equation, y)
@@ -266,7 +265,7 @@ class LaplaceSolver:
         
         try:
             # Input coefficients
-            print("\nStep 5: Input coefficients and forcing function.")
+            print("\nStep 5: The equation to be solved should be in the form ay'' + by' + cy = f(x)\nInput coefficients and forcing function.")
             a = int(input("Input coefficient 'a' for y'' (enter 0 if not present): "))
             b = int(input("Input coefficient 'b' for y' (enter 0 if not present): "))
             c = int(input("Input coefficient 'c' for y (enter 0 if not present): "))
