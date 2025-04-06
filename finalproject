@@ -134,17 +134,20 @@ class Firstorder:
         
         print("First, prove the equation is exact")
         
+        dMdy = sp.diff(M, y)
+        dNdx = sp.diff(N,y)
         
-        print("Finding the solution")
-        
-        u_x = sp.integrate(M,x)
-        u_y = sp.integrate(N,y)
-        
-        missing = u_x - u_y
-        
-        solution = u_x + missing + C
-        
-        print("Solution is" + solution)
+        try:
+            
+            if dMdx != dNdx :
+                raise ValueError("The equation is NOT exact.")
+            
+            print("Finding the solution")
+            u_x = sp.integrate(M,x)
+            u_y = sp.integrate(N,y)
+            missing = u_x - u_y
+            solution = u_x + missing + C
+            print("Solution is" + solution)
         
             
 class Secondorder:
