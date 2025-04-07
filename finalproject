@@ -119,7 +119,7 @@ class Firstorder:
         
         except Exception as e:
             print(f"\nAn error occurred while solving: {e}")
-
+            
     @staticmethod
     def Exact():
         print("\nSolving an Exact differential equation:")
@@ -127,28 +127,45 @@ class Firstorder:
         
         x = sp.symbols('x')
         y = sp.symbols('y')
-        C = sp.symbols('C')
         
+        print("\nStep 1: Input the functions M(x, y) and N(x, y).")
         M = sp.sympify(input("Input M(x,y): "))
         N = sp.sympify(input("Input N(x,y): "))
         
-        print("First, prove the equation is exact")
+        print("\nStep2: Prove the equation is exact")
+        print("To check exactness, compute:")
         
+        # compute the partial derivatives
         dMdy = sp.diff(M, y)
-        dNdx = sp.diff(N,y)
+        dNdx = sp.diff(N,x)
+        
+        print("Partial derivative of M with respect to y (∂M/∂y):",dMdy)
+        print("Partial derivative of N with respect to x (∂N/∂x):",dNdx)
         
         try:
+            # check to see if partial derivatives are equal
+            if dMdy != dNdx :
+                raise ValueError("The equation is NOT exact because ∂M/∂y ≠ ∂N/∂x.")
             
-            if dMdx != dNdx :
-                raise ValueError("The equation is NOT exact.")
-            
-            print("Finding the solution")
-            u_x = sp.integrate(M,x)
-            u_y = sp.integrate(N,y)
-            missing = u_x - u_y
-            solution = u_x + missing + C
-            print("Solution is" + solution)
+            print("\nStep 3: Find the solution to the exact equation by finding the potential function")
+            # Integrate M with respect to x
+            u_x = sp.integrate(M, x)
+            print(f"∫M dx = {u_x}")
         
+            # Find g(y)
+            g_prime_y = sp.simplify(N - sp.diff(u_x, y))
+            print(f"g'(y) = N - ∂/∂y ∫M dx = {g_prime_y}")
+        
+            g_y = sp.integrate(g_prime_y, y)
+            print(f"∫g'(y) dy = {g_y}")
+        
+            # general solution
+            solution = u_x + g_y
+            print("\nThe general solution is:")
+            print(f"C = {solution}")
+
+        except Exception as e:
+            print(f"\nAn error occurred while solving: {e}")
             
 class Secondorder:
     @staticmethod
@@ -236,47 +253,49 @@ class Secondorder:
 
     @staticmethod
     def nonhomogeneous(function):
-        print("\nSolving a nonhomogeneous second-order differential equation:")
-        print("Step 1: Recognize the equation is in the form ay'' + by' + cy = f(x).")
-        print("Step 2: Determine the appropriate method: undetermined coefficients or variation of parameters.")
+        print("Solving Nonhomogeneous Second-Order Differential Equation")
+        print("General Form: a·y'' + b·y' + c·y = f(x)\n")
+        
+        print("Step 1: Find the Complementary Solution (y_c)")
+        print("Solve the homogeneous equation: a·y'' + b·y' + c·y = 0")
+        print("This gives the solution to the associated homogeneous equation")
+        
         x = sp.symbols('x')
         y = sp.Function('y')(x)
         
         try:
-            print("Step 3: Input the coefficients a, b, and c.")
-            a = int(input("Input your 'a' value: "))
-            b = int(input("Input your 'b' value: "))
-            c = int(input("Input your 'c' value: "))
+            print("\nStep 2: Input Coefficients of Homogeneous Equation")
+            print("These determine the characteristic equation's roots")
+            a = int(input("Enter coefficient 'a' (y'' term): "))
+            b = int(input("Enter coefficient 'b' (y' term): "))
+            c = int(input("Enter coefficient 'c' (y term): "))
         except ValueError:
-            print("Invalid input. Please enter numeric values for a, b, and c.")
+            print("\nERROR: Invalid input. Coefficients must be numeric values.")
             return
-
+    
         try:
-            print(f"Step 4: The function f(x) was {function}.")
+            print("\nStep 3: Analyze Nonhomogeneous Term f(x)")
+            print(f"Your forcing function is: f(x) = {function}")
             function = function.replace("e^", "exp")
             f_x = sp.sympify(function)
         except sp.SympifyError as e:
-            print(f"Error parsing f(x): {e}")
+            print(f"\nERROR: Invalid function format - {e}")
+            print("Use Python syntax (e.g., '3*exp(2*x)' instead of '3e^(2x)')")
             return
-
-        # Create differential equation
-        equation = sp.Eq(a*y.diff(x,x) + b*y.diff(x) + c*y, f_x) 
+    
+        equation = sp.Eq(a*y.diff(x,x) + b*y.diff(x) + c*y, f_x)
+        
+        print("\nStep 4: Determine Particular Solution (y_p)")
         
         try:
-            print("Step 5: Solve the differential equation using an appropriate method.")
-            # Attempt undetermined coefficients first
-            solution = sp.dsolve(equation, y, hint='undetermined_coefficients') # built in function to solve for complementary function
+            solution = sp.dsolve(equation, y, hint='undetermined_coefficients')
         except Exception:
-            # Fallback to general solution method
             solution = sp.dsolve(equation, y)
-
-        # Extract the right-hand side of the solution (the expression for y(x))
+    
         rhs = solution.rhs
-
-        # Format solution string as "y(x) = ..."
         sol_str = f"y(x) = {sp.sstr(rhs)}"
         
-        print("\nGeneral solution:")
+        print("Combined Solution: y(x) = Complementary Solution (from homogeneous equation) + Particular Solution (specific to forcing function)")
         print(sol_str)
 
 class LaplaceSolver:
@@ -352,7 +371,7 @@ def main():
     if order == "1":
         try:
             print("\nStep 2: Choose a method to solve the first-order differential equation.")
-            firstorder_input = int(input("Solving Integrating Factor (1), Separation of Variables (2), Bernoulli (3), or Laplace (4)?:\n"))
+            firstorder_input = int(input("Solving Integrating Factor (1), Separation of Variables (2), Bernoulli (3), Laplace (4), or Exact (5)?:\n"))
             if firstorder_input == 1:
                 Firstorder.integrating_factor()
             elif firstorder_input == 2:
@@ -361,6 +380,8 @@ def main():
                 Firstorder.Bernoulli()
             elif firstorder_input == 4:
                 LaplaceSolver.solve_with_laplace()
+            elif firstorder_input == 5:
+                Firstorder.Exact()
             else:
                 print("Invalid input. Please choose either 1, 2, 3 or 4.")
         except ValueError:
