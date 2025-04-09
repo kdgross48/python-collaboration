@@ -1,0 +1,163 @@
+"""
+Created on Wed Apr  9 04:57:35 2025
+
+@author: gross.ke
+"""
+
+import tkinter as tk
+from tkinter import ttk
+from sympy import symbols, Function, Eq, dsolve, Derivative, simplify, exp, sin, cos
+
+x = symbols('x')
+y = Function('y')
+
+class DiffEqApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Differential Equation Solver")
+        self.geometry("900x700")
+        self.frames = {}
+        self.create_frames()
+        self.show_frame("StartPage")
+
+    def create_frames(self):
+        for F in (StartPage, FirstOrderPage, SecondOrderPage,
+                  SeparationPage, IntegratingFactorPage,
+                  BernoulliPage, ExactPage, FirstLaplacePage,
+                  SecondHomogeneousPage, SecondNonhomogeneousPage,
+                  SecondLaplacePage):
+            frame = F(self)
+            self.frames[F.__name__] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
+
+    def show_frame(self, page_name):
+        frame = self.frames[page_name]
+        frame.tkraise()
+
+class StartPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Select Order of Differential Equation", font=("Arial", 18)).pack(pady=20)
+        ttk.Button(self, text="First Order", command=lambda: master.show_frame("FirstOrderPage")).pack(pady=10)
+        ttk.Button(self, text="Second Order", command=lambda: master.show_frame("SecondOrderPage")).pack(pady=10)
+
+class FirstOrderPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Select First Order Method", font=("Arial", 18)).pack(pady=20)
+        ttk.Button(self, text="Separation of Variables", command=lambda: master.show_frame("SeparationPage")).pack(pady=5)
+        ttk.Button(self, text="Integrating Factor", command=lambda: master.show_frame("IntegratingFactorPage")).pack(pady=5)
+        ttk.Button(self, text="Bernoulli", command=lambda: master.show_frame("BernoulliPage")).pack(pady=5)
+        ttk.Button(self, text="Exact", command=lambda: master.show_frame("ExactPage")).pack(pady=5)
+        ttk.Button(self, text="Laplace", command=lambda: master.show_frame("FirstLaplacePage")).pack(pady=5)
+
+class SecondOrderPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Select Second Order Method", font=("Arial", 18)).pack(pady=20)
+        ttk.Button(self, text="Homogeneous", command=lambda: master.show_frame("SecondHomogeneousPage")).pack(pady=5)
+        ttk.Button(self, text="Nonhomogeneous", command=lambda: master.show_frame("SecondNonhomogeneousPage")).pack(pady=5)
+        ttk.Button(self, text="Laplace", command=lambda: master.show_frame("SecondLaplacePage")).pack(pady=5)
+
+class SeparationPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Separation of Variables", font=("Arial", 18)).pack(pady=10)
+
+        self.fx_entry = self.create_labeled_entry("f(x):")
+        self.gy_entry = self.create_labeled_entry("g(y):")
+
+        ttk.Button(self, text="Solve", command=self.solve).pack(pady=5)
+        ttk.Button(self, text="Need Help?", command=self.show_help).pack(pady=5)
+
+        self.output = self.create_output_box()
+        self.tutor_box = self.create_output_box("Tutor Help")
+
+    def create_labeled_entry(self, label_text):
+        frame = ttk.Frame(self)
+        frame.pack(pady=5)
+        ttk.Label(frame, text=label_text).pack(side="left")
+        entry = ttk.Entry(frame, width=30)
+        entry.pack(side="left")
+        return entry
+
+    def create_output_box(self, label="Output"):
+        ttk.Label(self, text=label, font=("Arial", 12)).pack(pady=5)
+        text = tk.Text(self, height=6, width=100)
+        text.pack(pady=5)
+        return text
+
+    def solve(self):
+        try:
+            f_expr = eval(self.fx_entry.get(), {"x": x, "exp": exp, "sin": sin, "cos": cos})
+            g_expr = eval(self.gy_entry.get(), {"y": y(x), "exp": exp, "sin": sin, "cos": cos})
+            eq = Eq(Derivative(y(x), x), f_expr * g_expr)
+            sol = dsolve(eq, y(x))
+            self.output.delete("1.0", tk.END)
+            self.output.insert(tk.END, f"Solution: {sol}\n")
+        except Exception as e:
+            self.output.insert(tk.END, f"Error: {str(e)}\n")
+
+    def show_help(self):
+        self.tutor_box.delete("1.0", tk.END)
+        help_text = (
+            "In Separation of Variables, we aim to rewrite the equation in the form\n"
+            "dy/dx = f(x) * g(y), then integrate both sides: ∫1/g(y) dy = ∫f(x) dx.\n"
+            "Make sure your expressions are compatible with this format.\n"
+            "Examples: f(x) = x, g(y) = y → dy/dx = x*y"
+        )
+        self.tutor_box.insert(tk.END, help_text)
+
+# Placeholder classes below will be filled similarly as needed.
+class IntegratingFactorPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Integrating Factor Method", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+class BernoulliPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Bernoulli Method", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+class ExactPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Exact Method", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+class FirstLaplacePage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Laplace Transform (First Order)", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+class SecondHomogeneousPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Second Order Homogeneous", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+class SecondNonhomogeneousPage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Second Order Nonhomogeneous", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+class SecondLaplacePage(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        ttk.Label(self, text="Second Order Laplace", font=("Arial", 18)).pack(pady=10)
+        self.output = tk.Text(self, height=8, width=80)
+        self.output.pack(pady=10)
+
+if __name__ == "__main__":
+    app = DiffEqApp()
+    app.mainloop()
