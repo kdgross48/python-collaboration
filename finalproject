@@ -1,3 +1,4 @@
+
 import cmath
 import sympy as sp
 
@@ -151,18 +152,19 @@ class Firstorder:
             # Integrate M with respect to x
             u_x = sp.integrate(M, x)
             print(f"∫M dx = {u_x}")
-        
-            # Find g(y)
-            g_prime_y = sp.simplify(N - sp.diff(u_x, y))
-            print(f"g'(y) = N - ∂/∂y ∫M dx = {g_prime_y}")
-        
-            g_y = sp.integrate(g_prime_y, y)
-            print(f"∫g'(y) dy = {g_y}")
-        
-            # general solution
-            solution = u_x + g_y
-            print("\nThe general solution is:")
-            print(f"C = {solution}")
+            u_y = sp.integrate(N,y)
+            print(f"∫N dy = {u_y}")
+            
+            print("Match the Terms")
+            ux_terms = set(sp.Add.make_args(u_x))
+            uy_terms = set(sp.Add.make_args(u_y))
+            
+            u_terms = ux_terms.union(uy_terms)
+            
+            u_solution = sp.simplify(sum(u_terms))
+            
+            print(f"The solution is: {u_solution} + C ")
+            
 
         except Exception as e:
             print(f"\nAn error occurred while solving: {e}")
