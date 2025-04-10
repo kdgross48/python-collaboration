@@ -327,6 +327,18 @@ class ExactPage(tk.Frame):
             solution = u_x + g_y
             self.output.insert(tk.END, f"\nThe general solution is:\nC = {solution}")
 
+            u_y = sp.integrate(N, y)
+            self.output.insert(tk.END, f"\n∫N dy = {u_y}\n")
+
+            ux_terms = set(sp.Add.make_args(u_x))
+            uy_terms = set(sp.Add.make_args(u_y))
+
+            u_terms = ux_terms.union(uy_terms)
+            u_solution = sp.simplify(sum(u_terms))
+
+            self.output.insert(tk.END, f"\nCombined potential function: {u_solution} + C")
+
+
         except Exception as e:
             self.output.insert(tk.END, f"\nAn error occurred while solving: {e}")
 
@@ -600,6 +612,10 @@ class SecondLaplacePage(tk.Frame):
 
 
 
+
+if __name__ == "__main__":
+    app = DiffEqApp()
+    app.mainloop()
 
 if __name__ == "__main__":
     app = DiffEqApp()
